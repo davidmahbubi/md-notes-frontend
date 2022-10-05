@@ -1,48 +1,30 @@
 <script setup>
-import { ref } from "vue";
-import { onMounted, watch } from "@vue/runtime-core";
-import * as monaco from "monaco-editor";
-import showdown from "showdown";
-import PreviewPane from "./../components/PreviewPane.vue";
+import { ref, watch } from "vue";
+import { mdToHtml } from "./../core/markdown-processor";
+
+// Components
+import ThePreviewPane from "./../components/ThePreviewPane.vue";
+import TheEditorPane from "./../components/TheEditorPane.vue";
 
 const rawText = ref();
 const htmlText = ref();
 
-const converter = new showdown.Converter();
+function fillRawText(text) {
+  rawText.value = text;
+}
 
-onMounted(() => {
-  const editor = monaco.editor.create(document.querySelector(".editor"), {
-    language: "markdown",
-    minimap: {
-      enabled: true,
-      autohide: true,
-    },
-  });
-  editor.onKeyUp(() => {
-    rawText.value = editor.getValue();
-  });
-});
-
-watch(rawText, (val) => {
-  htmlText.value = converter.makeHtml(val);
+watch(rawText, (currentText) => {
+  htmlText.value = mdToHtml(currentText);
 });
 </script>
 
 <template>
   <main class="grid grid-cols-2 h-full px-4">
-    <div class="left editor-pane">
-      <h3 class="my-2">Editor</h3>
-      <div class="editor h-full"></div>
+    <div class="left">
+      <TheEditorPane @editor-key-up="fillRawText" />
     </div>
     <div class="right">
-      <PreviewPane :html-text="htmlText" />
+      <ThePreviewPane :html-text="htmlText" />
     </div>
   </main>
 </template>
-
-<style lang="postcss">
-.editor-pane {
-  height: 100vh;
-  overflow: hidden;
-}
-</style>
