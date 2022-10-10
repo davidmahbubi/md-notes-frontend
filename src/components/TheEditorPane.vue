@@ -1,12 +1,14 @@
 <script setup>
 import { onMounted } from "vue";
 import * as monaco from "monaco-editor";
+import interact from 'interactjs';
 
 const emit = defineEmits(["editorKeyUp"]);
 
 onMounted(() => {
   const editor = monaco.editor.create(document.querySelector(".editor"), {
     language: "markdown",
+    automaticLayout: true,
     minimap: {
       enabled: false,
     },
@@ -30,6 +32,6 @@ onMounted(() => {
 <style scoped>
 .editor-pane {
   height: 100vh;
-  overflow: hidden;
+  /* overflow: hidden; */
 }
 </style>
